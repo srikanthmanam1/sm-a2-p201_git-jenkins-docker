@@ -1,50 +1,37 @@
 pipeline {
-    agent {
-        // Run the pipeline inside an Ubuntu container
-        docker {
-            image 'ubuntu:22.04'
-            args '-v /var/run/docker.sock:/var/run/docker.sock' // allow Docker access
-        }
+    agent any
+    options {
+        timestamps()
     }
-
-    environment {
-        DOCKER_CLI_HINTS = "false"
-    }
-
     stages {
-        stage('Install dependencies') {
+        stage('Hello 1') {
             steps {
-                sh '''
-                    apt-get update
-                    apt-get install -y docker.io curl
-                    docker --version
-                '''
+                echo 'Hello World 1'
+                 sh 'docker --version'
             }
         }
-
-        stage('Run Docker commands') {
+        stage('Hello 2') {
             steps {
-                sh '''
-                    echo "Pulling nginx image..."
-                    docker pull nginx:latest
-
-                    echo "Running nginx container..."
-                    docker run -d --name test-nginx -p 8080:80 nginx:latest
-
-                    echo "Listing running containers..."
-                    docker ps
-
-                    echo "Stopping and removing container..."
-                    docker stop test-nginx
-                    docker rm test-nginx
-                '''
+                echo 'Hello World 2'
+                sh 'docker run hello-world'
             }
         }
-    }
-
-    post {
-        always {
-            echo "Pipeline completed."
+        stage('Hello 3') {
+            steps {
+                echo 'Hello World 3'
+                sh 'docker images'
+            }
+        }
+        stage('Hello 4') {
+            steps {
+                echo 'Hello World 4'
+                sh 'docker ps'
+            }
+        }
+        stage('Hello 5') {
+            steps {
+                echo 'Hello World 5'
+            }
         }
     }
 }
