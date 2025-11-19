@@ -3,7 +3,6 @@ pipeline {
     options {
         timestamps()
     }
-    
     stages {
         stage('Hello 1') {
             steps {
