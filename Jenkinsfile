@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = credentials('dockerhub-username')  // Jenkins credential ID
-        IMAGE_NAME = "mydockeruser/jenkins-demo"
+        //DOCKERHUB_USER = credentials('dockerhub-username')  // Jenkins credential ID
+        IMAGE_NAME = "jenkins"
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-user/your-repo.git'
+                git 'https://github.com/srikanthmanam1/sm-a2-p201_git-jenkins-docker.git'
             }
         }
 
@@ -29,19 +29,19 @@ pipeline {
             }
         }
 
-        stage('Push to Docker Hub') {
-            when {
-                branch 'main'
-            }
-            steps {
-                script {
-                    docker.withRegistry('', 'dockerhub-username') {
-                        dockerImage.push("${BUILD_NUMBER}")
-                        dockerImage.push("latest")
-                    }
-                }
-            }
-        }
+        //stage('Push to Docker Hub') {
+        //    when {
+        //        branch 'main'
+        //    }
+        //    steps {
+        //        script {
+        //            docker.withRegistry('', 'dockerhub-username') {
+        //                dockerImage.push("${BUILD_NUMBER}")
+        //                dockerImage.push("latest")
+        //            }
+        //        }
+        //    }
+        //}
     }
 
     post {
