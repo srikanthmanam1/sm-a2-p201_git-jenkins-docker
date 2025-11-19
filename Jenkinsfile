@@ -1,37 +1,52 @@
 pipeline {
     agent any
-    options {
-        timestamps()
+
+    environment {
+        DOCKERHUB_USER = credentials('dockerhub-username')  // Jenkins credential ID
+        IMAGE_NAME = "mydockeruser/jenkins-demo"
     }
+
     stages {
-        stage('Hello 1') {
+        stage('Checkout') {
             steps {
-                echo 'Hello World 1'
-                 sh 'docker --version'
+                git 'https://github.com/your-user/your-repo.git'
             }
         }
-        stage('Hello 2') {
+
+        stage('Build Docker Image') {
             steps {
-                echo 'Hello World 2'
-                sh 'docker run hello-world'
+                script {
+                    dockerImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}")
+                }
             }
         }
-        stage('Hello 3') {
+
+        stage('Run Container for Tests') {
             steps {
-                echo 'Hello World 3'
-                sh 'docker images'
+                script {
+                    dockerImage.run('-d -p 5000:5000')
+                }
             }
         }
-        stage('Hello 4') {
+
+        stage('Push to Docker Hub') {
+            when {
+                branch 'main'
+            }
             steps {
-                echo 'Hello World 4'
-                sh 'docker ps'
+                script {
+                    docker.withRegistry('', 'dockerhub-username') {
+                        dockerImage.push("${BUILD_NUMBER}")
+                        dockerImage.push("latest")
+                    }
+                }
             }
         }
-        stage('Hello 5') {
-            steps {
-                echo 'Hello World 5'
-            }
+    }
+
+    post {
+        always {
+            sh 'docker ps -q --filter ancestor=$IMAGE_NAME | xargs -r docker stop'
         }
     }
 }
