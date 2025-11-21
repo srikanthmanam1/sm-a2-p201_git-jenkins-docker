@@ -13,7 +13,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'dockerImage = docker.build -t $IMAGE_NAME:$IMAGE_TAG .'
+                    sh 'docker --version'
+                    sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
                 }
             }
         }
@@ -30,7 +31,8 @@ pipeline {
             echo 'Post Action'
             //sh 'docker ps -q --filter ancestor=$IMAGE_NAME | xargs -r docker stop'
             sh 'docker stop $IMAGE_NAME:$IMAGE_TAG'
-            sh 'docker container prune -f'
+            sh 'docker rmi $IMAGE_NAME:$IMAGE_TAG || true'
+            //sh 'docker container prune -f'
         }
     }
 }
