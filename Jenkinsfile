@@ -4,6 +4,7 @@ pipeline {
         IMAGE_NAME = "srikanthmanam/sm-app1"
         IMAGE_TAG = "latest"
     }
+    
     stages {
         stage('Checkout') {
             steps {                
