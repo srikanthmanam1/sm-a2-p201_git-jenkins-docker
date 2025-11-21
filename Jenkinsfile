@@ -1,52 +1,36 @@
 pipeline {
     agent any
-
     environment {
-        //DOCKERHUB_USER = credentials('dockerhub-username')  // Jenkins credential ID
-        IMAGE_NAME = "jenkins"
+        IMAGE_NAME = "srikanthmanam/sm-app1"
+        IMAGE_TAG = "latest"
     }
-
     stages {
         stage('Checkout') {
-            steps {
-                git 'https://github.com/srikanthmanam1/sm-a2-p201_git-jenkins-docker.git'
+            steps {                
+                git branch: 'gjdf_ex1', url 'https://github.com/srikanthmanam1/sm-a2-p201_git-jenkins-docker.git'
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}")
+                    sh 'dockerImage = docker.build -t $IMAGE_NAME:$IMAGE_TAG .'
                 }
             }
         }
-
-        stage('Run Container for Tests') {
+        stage('Run Docker Container') {
             steps {
                 script {
-                    dockerImage.run('-d -p 5000:5000')
+                    sh 'docker run --rm $IMAGE_NAME:$IMAGE_TAG'
                 }
             }
         }
-
-        //stage('Push to Docker Hub') {
-        //    when {
-        //        branch 'main'
-        //    }
-        //    steps {
-        //        script {
-        //            docker.withRegistry('', 'dockerhub-username') {
-        //                dockerImage.push("${BUILD_NUMBER}")
-        //                dockerImage.push("latest")
-        //            }
-        //        }
-        //    }
-        //}
     }
-
     post {
         always {
-            sh 'docker ps -q --filter ancestor=$IMAGE_NAME | xargs -r docker stop'
+            echo 'Post Action'
+            //sh 'docker ps -q --filter ancestor=$IMAGE_NAME | xargs -r docker stop'
+            sh 'docker stop $IMAGE_NAME:$IMAGE_TAG'
+            sh 'docker container prune -f'
         }
     }
 }
