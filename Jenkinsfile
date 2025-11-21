@@ -46,6 +46,7 @@ pipeline {
             echo 'Post Action'
             //sh 'docker ps -q --filter ancestor=$IMAGE_NAME | xargs -r docker stop'
             sh 'docker stop $IMAGE_NAME:$IMAGE_TAG'
+            sh 'docker ps -a --filter "status=exited"'
             sh 'docker rmi $IMAGE_NAME:$IMAGE_TAG || true'
             //sh 'docker container prune -f'
         }
