@@ -6,11 +6,11 @@ pipeline {
     }
     
     stages {
-        stage('Checkout') {
+        /*stage('Checkout') {
             steps {                
                 git branch: 'gjdf_ex1', url 'https://github.com/srikanthmanam1/sm-a2-p201_git-jenkins-docker.git'
             }
-        }
+        }*/
         stage('Build Docker Image') {
             steps {
                 script {
