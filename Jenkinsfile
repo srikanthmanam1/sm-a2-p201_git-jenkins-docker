@@ -21,6 +21,7 @@ pipeline {
         }
         stage('Run Docker Container') {
             steps {
+                echo 'Run Docker Container'
                 script {
                     sh 'docker run --rm $IMAGE_NAME:$IMAGE_TAG'
                 }
